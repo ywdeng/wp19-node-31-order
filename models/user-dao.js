@@ -19,8 +19,26 @@ class UserDAO extends baseClass.DAO {
     constructor(filename) {
         super(filename, "Users", ["id", "name", "tel", "addr", "password", "isAdmin"], "id");
         var db = new sqlite3.Database(this.dataFile);
-        db.serialize(function () {
-            db.run(DDL_USERS);
+        db.serialize(() => {
+            db.run(DDL_USERS, [], (err) => {
+                if (err) throw err;
+                console.log("Table " + this.tableName + " created.");
+            });
+            db.get("SELECT COUNT(*) AS NUM FROM " + this.tableName, [], (err, row) => {
+                if (err) throw err;
+                let num = Number(row.NUM);
+                if (num === 0) {
+                    console.log(this.tableName + " create an administrator account for empty table.");
+                    this.insert({
+                        id: "0000000000",
+                        name: "店長",
+                        tel: "02-8662-1688",
+                        addr: "台北市羅斯福路六段218號10樓",
+                        password: "1qaz@WSX",
+                        isAdmin: true
+                    });
+                }
+            });
         });
     }
 
@@ -121,7 +139,7 @@ class UserDAO extends baseClass.DAO {
             } else if (callback) {
                 callback(null, entity);
             } else {
-                console.log(this.tableName + " updates " + this.changes + " row(s).");
+                console.log("Users updates " + this.changes + " row(s).");
             }
         });
         db.close();
@@ -144,7 +162,7 @@ class UserDAO extends baseClass.DAO {
                 entity.rowid = this.lastID;
                 callback(null, entity);
             } else {
-                console.log(this.tableName + " inserts " + this.changes + " row, lastID is " + this.lastID + ".");
+                console.log("Users inserts " + this.changes + " row, lastID is " + this.lastID + ".");
             }
         });
         db.close();
@@ -160,7 +178,7 @@ class UserDAO extends baseClass.DAO {
             } else if (callback) {
                 callback(null, this.changes);
             } else {
-                console.log(this.tableName + " deletes " + this.changes + " row.");
+                console.log("Users deletes " + this.changes + " row.");
             }
         });
         db.close();

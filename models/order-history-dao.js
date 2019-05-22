@@ -19,8 +19,11 @@ class OrderHistoryDAO extends baseClass.DAO {
     constructor(filename) {
         super(filename, "OrderHistory", ["orderId", "fromStatus", "toStatus", "userId", "ctime", "note"], ["rowid", "orderId"]);
         var db = new sqlite3.Database(this.dataFile);
-        db.serialize(function () {
-            db.run(DDL_ORDER_HISTORY);
+        db.serialize(() => {
+            db.run(DDL_ORDER_HISTORY, [], (err) => {
+                if (err) throw err;
+                console.log("Table " + this.tableName + " created.");
+            });
         });
     }
 
@@ -71,7 +74,7 @@ class OrderHistoryDAO extends baseClass.DAO {
             } else if (callback) {
                 callback(null, this.changes);
             } else {
-                console.log(this.tableName + " deletes " + this.changes + " row(s).");
+                console.log("OrderHistory deletes " + this.changes + " row.");
             }
         });
         db.close();
@@ -100,7 +103,7 @@ class OrderHistoryDAO extends baseClass.DAO {
             } else if (callback) {
                 callback(null, this.changes);
             } else {
-                console.log(this.tableName + " inserts " + this.changes + " row(s).");
+                console.log("OrderHistory inserts " + this.changes + " row.");
             }
         });
         db.close();

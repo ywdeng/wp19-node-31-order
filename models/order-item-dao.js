@@ -19,8 +19,11 @@ class OrderItemDAO extends baseClass.DAO {
     constructor(filename) {
         super(filename, "OrderItems", ["orderId", "name", "size", "price", "qty", "sum", "note"], ["rowid", "orderId"]);
         var db = new sqlite3.Database(this.dataFile);
-        db.serialize(function () {
-            db.run(DDL_ORDER_ITEMS);
+        db.serialize(() => {
+            db.run(DDL_ORDER_ITEMS, [], (err) => {
+                if (err) throw err;
+                console.log("Table " + this.tableName + " created.");
+            });
         });
     }
 
@@ -82,7 +85,7 @@ class OrderItemDAO extends baseClass.DAO {
             } else if (callback) {
                 callback(null, this.changes);
             } else {
-                console.log(this.tableName + " inserts " + this.changes + " rows.");
+                console.log("OrderItems inserts " + this.changes + " rows.");
             }
         });
         db.close();
@@ -95,7 +98,7 @@ class OrderItemDAO extends baseClass.DAO {
         entities.forEach(e => {
             e.orderId = orderId;
             let data = this.toArrayWithoutId(e);
-            db.run(sql, data, function (err) {
+            db.run(sql, data, (err) => {
                 if (err) {
                     console.error(err)
                     if (callback) callback(err, 0);
