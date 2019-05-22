@@ -22,7 +22,7 @@ class UserDAO extends baseClass.DAO {
         db.serialize(() => {
             db.run(DDL_USERS, [], (err) => {
                 if (err) throw err;
-                console.log("Table " + this.tableName + " created.");
+                console.log("Table " + this.tableName + " OK.");
             });
             db.get("SELECT COUNT(*) AS NUM FROM " + this.tableName, [], (err, row) => {
                 if (err) throw err;

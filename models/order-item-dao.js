@@ -22,7 +22,7 @@ class OrderItemDAO extends baseClass.DAO {
         db.serialize(() => {
             db.run(DDL_ORDER_ITEMS, [], (err) => {
                 if (err) throw err;
-                console.log("Table " + this.tableName + " created.");
+                console.log("Table " + this.tableName + " OK.");
             });
         });
     }
